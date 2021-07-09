@@ -1,9 +1,6 @@
 {
-    "al.enableCodeAnalysis": true,
     "al.codeAnalyzers": [
         "${CodeCop}",
-        "${PerTenantExtensionCop}",
-        "${AppSourceCop}",
         "${UICop}"
     ],
     "CRS.ObjectNamePrefix": "C4BC ",
@@ -15,5 +12,6 @@
     "CRS.ExtensionObjectNamePattern": "<BaseNameShort> Ext BASE",
     "CRS.RemovePrefixFromFilename": true,
     "CRS.RenameWithGit": false,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "al.enableCodeAnalysis": true
 }

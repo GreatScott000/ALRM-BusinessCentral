@@ -9,5 +9,7 @@
     ],
     "settings": {
         "al.packageCachePath": ".\\.alpackages",
+        "al-id-range-manager.baseUrlWithoutVersion": "https://EVOL001-BC17:7048/bc/api/teamARTAAAE/extension",
+        "al-id-range-manager.companyId": "3bbc354f-3f37-4d99-9537-39a93f9ce66e",
     }
 }
