@@ -6,3 +6,4 @@ Base.g.xlf
 *.g.xlf
 *alstudio*.json
 **/.alcache/*
+*/.vscode/.altemplates/*

@@ -25,5 +25,6 @@
   "runtime": "6.0",
   "features": [
     "TranslationFile"
-  ]
+  ],
+  "target": "OnPrem"
 }
