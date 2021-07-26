@@ -11,6 +11,7 @@ table 80000 "C4BC Extension Header"
         field(1; "Code"; Code[20])
         {
             Caption = 'Code';
+            NotBlank = true;
             DataClassification = CustomerContent;
         }
         field(2; ID; Guid)
@@ -64,6 +65,18 @@ table 80000 "C4BC Extension Header"
             Editable = false;
             FieldClass = FlowField;
             CalcFormula = lookup("C4BC Assignable Range Header"."No. Series for Extensions" where(Code = field("Assignable Range Code")));
+        }
+        field(50; "Sell as Item No."; Code[20])
+        {
+            Caption = 'Sell as Item No.';
+            TableRelation = Item."No." where(Type = const("Non-Inventory"));
+            DataClassification = CustomerContent;
+        }
+        field(51; "Flat-rate Inv. as Item No."; Code[20])
+        {
+            Caption = 'Flat-rate Invoicing as Item No.';
+            TableRelation = Item."No." where(Type = const("Non-Inventory"));
+            DataClassification = CustomerContent;
         }
     }
 

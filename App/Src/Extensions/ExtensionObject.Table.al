@@ -52,9 +52,20 @@ table 80003 "C4BC Extension Object"
 
             trigger OnValidate()
             var
+                C4BCObjectTypeConfiguration: Record "C4BC Object Type Configuration";
+
                 TemplateRule: Text;
+
+                MaxLengthOfNameErr: Label 'The maximal name length for %1 is %2 chars. The current name is %3 chars long.', Comment = '%1 - Object type name, %2 - maximal name length, %3 - current name length';
             begin
                 Rec.TestField("Object Name");
+                if C4BCObjectTypeConfiguration.IsObjectTypeConfigurationUsed() then begin
+                    Rec.TestField("Object Type");
+                    C4BCObjectTypeConfiguration.Get(Rec."Object Type");
+                    if C4BCObjectTypeConfiguration."Max Name Length" <> 0 then
+                        if StrLen(Rec."Object Name") > C4BCObjectTypeConfiguration."Max Name Length" then
+                            Error(MaxLengthOfNameErr, Rec."Object Type", StrLen(Rec."Object Name"), C4BCObjectTypeConfiguration."Max Name Length");
+                end;
                 if CheckObjectNameDuplicity() then
                     Error(DuplicitNameErr, Rec.FieldCaption("Object Name"), Rec."Object Name", Rec."Object Type");
                 if not ObjectNameTemplateRulesMet(TemplateRule) then
@@ -74,6 +85,8 @@ table 80003 "C4BC Extension Object"
 
             trigger OnValidate()
             var
+                ObjectTypeConfiguration: Record "C4BC Object Type Configuration";
+
                 IObjectType: Interface "C4BC IObject Type";
                 DoesNotExtendsObjectErr: Label '%1 object type does not extend another object.', Comment = '%1 - object type that extends another object.';
             begin
@@ -81,9 +94,17 @@ table 80003 "C4BC Extension Object"
                     exit;
                 Rec.TestField("Object Type");
 
-                IObjectType := Rec."Object Type";
-                if not IObjectType.ExtendOtherObjects() then
-                    Error(DoesNotExtendsObjectErr, Rec."Object Type");
+                if ObjectTypeConfiguration.IsObjectTypeConfigurationUsed() then begin
+                    ObjectTypeConfiguration.Get(Rec."Object Type");
+                    if not ObjectTypeConfiguration."Extends Other Objects" then
+                        Error(DoesNotExtendsObjectErr, Rec."Object Type");
+                end else begin
+                    // Deprecated 2021/Q4 ->
+                    IObjectType := Rec."Object Type";
+                    if not IObjectType.ExtendOtherObjects() then
+                        Error(DoesNotExtendsObjectErr, Rec."Object Type");
+                    // Deprecated 2021/Q4 <-
+                end;
             end;
         }
         field(100; "Assignable Range Code"; Code[20])
@@ -116,6 +137,8 @@ table 80003 "C4BC Extension Object"
     }
 
     trigger OnInsert()
+    var
+        C4BCExtensionHeader: Record "C4BC Extension Header";
     begin
         Rec.TestField("Object Type");
         if "Object ID" = 0 then
@@ -123,6 +146,8 @@ table 80003 "C4BC Extension Object"
         Rec.TestField("Object ID");
         Rec.TestField("Object Name");
 
+        C4BCExtensionHeader.Get(Rec."Extension Code");
+        "Extension ID" := C4BCExtensionHeader.ID;
         if GuiAllowed then
             "Created By" := CopyStr(UserId(), 1, MaxStrLen("Created By"));
     end;
